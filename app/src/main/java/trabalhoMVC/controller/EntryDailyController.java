@@ -4,8 +4,7 @@
  */
 package trabalhoMVC.controller;
 
-import java.util.Date;
-import java.util.List;
+import java.util.ArrayList;
 import trabalhoMVC.dao.EntryDailyDAO;
 import trabalhoMVC.model.EntryDaily;
 
@@ -16,25 +15,25 @@ import trabalhoMVC.model.EntryDaily;
 public class EntryDailyController {
     private static EntryDailyDAO dao = new EntryDailyDAO();
 
-    public static boolean addEntry(String usuario, String texto) {
-        EntryDaily entry = new EntryDaily();
-        entry.setUser(usuario);
-        entry.setText(texto);
-        //entry.setDate(new Date()); // data atual
-        return dao.saveEntry(entry);
+    public static boolean createEntry(String title,String texto, int userId) {
+        EntryDaily entry = new EntryDaily(title, texto, userId);
+        return dao.create(entry);
     }
 
-    public static boolean upDateTextEntry(int id, String novoTexto) {
-        dao.upDateEntry(id, novoTexto);
-        return true;
+    public static boolean updateTextEntry(EntryDaily entry) {
+       
+        return dao.update(entry);
     }
 
     public static boolean removeEntry(int id) {
-        dao.deleteEntry(id);
-        return true;
+        return dao.delete(id);
     }
-
-    //public static List<EntryDaily> listEntryUser(String usuario) {
-    //    return dao.listEntryDaily(usuario);
-    //}
+    
+    public static ArrayList<EntryDaily> listEntryUser(int userId) {
+        return dao.getByUserId(userId);
+    }
+    
+    public static boolean removeEntryByTitle(String title) {
+        return dao.deleteByTitle(title);
+    }
 }

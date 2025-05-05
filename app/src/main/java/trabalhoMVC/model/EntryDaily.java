@@ -4,59 +4,59 @@
  */
 package trabalhoMVC.model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  *
  * @author MARIAEDUARDACOSTABAT
  */
 public class EntryDaily {
+   
     private int id;
-    private String user;
+    private String title;
     private String text;
     private String date;
+    private int userId;
 
-    
-    
-    public EntryDaily(int id, String user, String text, String date) {
-        this.id = id;
-        this.user = user;
+    public EntryDaily() {}
+
+    public EntryDaily(String title, String text, int userId){
+        String dataFormatada = createDate();
+        this.text = text;
+        this.userId = userId;    
+        this.title = createTitle(dataFormatada, title);
+        this.date = dataFormatada;
+    }
+    public EntryDaily(String title, String text, String date, int userId) {
+        this.title = title;
         this.text = text;
         this.date = date;
+        this.userId = userId;
     }
 
-    public EntryDaily() {
-        
+    private String createTitle(String data, String title) {
+        return "Dia " + data + " " + title;
     }
+    private String createDate() {
+        Date data = new Date();
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+        return formato.format(data);
+    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public int getId() {
-        return id;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public String getText() { return text; }
+    public void setText(String text) { this.text = text; }
 
-    public String getUser() {
-        return user;
-    }
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-  
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
 }
+
+

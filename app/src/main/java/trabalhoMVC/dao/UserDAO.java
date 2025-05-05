@@ -48,8 +48,8 @@ public class UserDAO {
             return false;
         }
     }
-    public boolean validateLogin(User user) {
-        String sql = "SELECT senha FROM usuarios WHERE usuario = ?";
+    public Integer validateLogin(User user) {
+        String sql = "SELECT id, senha FROM usuarios WHERE usuario = ?";
 
         try (Connection conn = Conect.getConect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -59,11 +59,14 @@ public class UserDAO {
 
             if (rs.next()) {
                 String senhaHash = rs.getString("senha");
-                return BCrypt.checkpw(user.getPassword(), senhaHash);
+                if (BCrypt.checkpw(user.getPassword(), senhaHash)) {
+                    return rs.getInt("id");
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
+
 }

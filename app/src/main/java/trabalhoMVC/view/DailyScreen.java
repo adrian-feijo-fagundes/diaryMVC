@@ -4,29 +4,32 @@
  */
 package trabalhoMVC.view;
 
-import trabalhoMVC.controller.UserController;
-import trabalhoMVC.model.User;
 
+import javax.swing.JOptionPane;
+import trabalhoMVC.controller.EntryDailyController;
+import trabalhoMVC.model.EntryDaily;
+import trabalhoMVC.model.User;
 /**
  *
  * @author MARIAEDUARDACOSTABAT
  */
 public class DailyScreen extends javax.swing.JFrame {
 
-    User user;
-    /**
-     * Creates new form Daily
-     */
-
-    private UserController UserController = new UserController();
-
+    private User user;
+    private EntryDaily entry;
+    
     public DailyScreen(User user) {
-    this.user = user;
-    initComponents();
-
-    carregarDiario(); // chama o método pra buscar e mostrar o conteúdo salvo
-}
-
+        this.user = user;
+        initComponents();    
+    }
+    public DailyScreen(User user, EntryDaily entry) {
+        this.user = user;
+        this.entry = entry;
+       
+        initComponents();   
+        txtDaily.setText(this.entry.getText());
+        txtTitle.setText(this.entry.getTitle());
+    }
     
 
     /**
@@ -42,6 +45,8 @@ public class DailyScreen extends javax.swing.JFrame {
         txtDaily = new javax.swing.JTextArea();
         btnSave = new javax.swing.JButton();
         btnExit = new javax.swing.JButton();
+        txtTitle = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -63,6 +68,8 @@ public class DailyScreen extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setText("Titulo:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -70,33 +77,64 @@ public class DailyScreen extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(79, 79, 79)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnSave)
-                        .addGap(70, 70, 70)
-                        .addComponent(btnExit))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(btnSave)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnExit))
+                        .addComponent(jScrollPane1)
+                        .addComponent(txtTitle))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(87, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(9, 9, 9)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave)
                     .addComponent(btnExit))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-
+       String text = txtDaily.getText();
+       String title = txtTitle.getText();
+       
+       if (title.length() == 0) {
+           JOptionPane.showMessageDialog(null, " Preencha o Titulo ");
+           return;
+       }
+        
+        boolean success = false;
+        if (this.entry == null) {
+            success = EntryDailyController.createEntry(title, text, user.getId());         
+        } else {
+            
+            entry.setText(text);
+            success = EntryDailyController.updateTextEntry(entry);
+        }
+        
+        if (success) {
+            JOptionPane.showMessageDialog(null, " Foi salvo com sucesso! ");
+            new ListDaily(user).setVisible(true);
+            this.dispose();
+        }
+        else JOptionPane.showMessageDialog(null, " Não foi salvo corretamente! ");
     }//GEN-LAST:event_btnSaveActionPerformed
 
+
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
+        new ListDaily(user).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnExitActionPerformed
 
@@ -134,14 +172,10 @@ public class DailyScreen extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExit;
     private javax.swing.JButton btnSave;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtDaily;
+    private javax.swing.JTextField txtTitle;
     // End of variables declaration//GEN-END:variables
 
-    private void carregarDiario() {
-    //DailyDAO dao = new DailyDAO(); // essa classe você cria no model ou DAO
-    //String conteudo = dao.carregarDiario(user.getName()); // ou getLogin(), dependendo do nome do campo
-    //txtDaily.setText(conteudo);
-    }
 }
-

@@ -4,8 +4,6 @@
  */
 package trabalhoMVC.controller;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import trabalhoMVC.dao.UserDAO;
 import trabalhoMVC.model.User;
 
@@ -32,7 +30,10 @@ public class UserController {
       public static User validateLogin(String username, char[] charSenha){
        String senha = new String(charSenha).trim();
        User usuario = new User(username, senha);
-       userDAO.validateLogin(usuario);
+       Integer id = userDAO.validateLogin(usuario);
+        
+       if (id != null) usuario.setId(id);
+       
        return usuario;
    }
 }

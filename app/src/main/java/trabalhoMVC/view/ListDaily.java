@@ -4,12 +4,22 @@
  */
 package trabalhoMVC.view;
 
+import java.time.DayOfWeek;
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import trabalhoMVC.controller.EntryDailyController;
+import trabalhoMVC.model.EntryDaily;
+import trabalhoMVC.model.User;
+
 /**
  *
  * @author MARIAEDUARDACOSTABAT
  */
 public class ListDaily extends javax.swing.JFrame {
-
+    private User user;
+    private DefaultListModel<String> model = new DefaultListModel<>();
+    private ArrayList<EntryDaily> entries = new ArrayList<>();
     /**
      * Creates new form ListDaily
      */
@@ -17,6 +27,20 @@ public class ListDaily extends javax.swing.JFrame {
         initComponents();
     }
 
+    public ListDaily(User user) {
+        this.user = user;
+        initComponents();
+        entriesList.setModel(model);
+        update();
+    }
+    
+    public void update() {
+        model.clear();
+        this.entries = EntryDailyController.listEntryUser(this.user.getId());
+        for (EntryDaily entry : this.entries) {
+            model.addElement(entry.getTitle());
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -27,19 +51,19 @@ public class ListDaily extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        entriesList = new javax.swing.JList<>();
         btnAddNew = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+        entriesList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane1.setViewportView(jList1);
+        jScrollPane1.setViewportView(entriesList);
 
         btnAddNew.setText("Add");
         btnAddNew.addActionListener(new java.awt.event.ActionListener() {
@@ -49,8 +73,18 @@ public class ListDaily extends javax.swing.JFrame {
         });
 
         btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         btnEdit.setText("Edit");
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -87,8 +121,44 @@ public class ListDaily extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddNewActionPerformed
-        // TODO add your handling code here:
+        new DailyScreen(user).setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnAddNewActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        String title = entriesList.getSelectedValue();
+        
+        if (title == null) { 
+            JOptionPane.showMessageDialog(null, "Selecione um item da lista");
+            return;
+        }
+        
+        boolean success = EntryDailyController.removeEntryByTitle(title);
+        
+        if (success) {   
+            JOptionPane.showMessageDialog(null, "Item removido com sucesso");
+            update();
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro ao remover item");
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+       String title = entriesList.getSelectedValue();      
+        if (title == null) { 
+            JOptionPane.showMessageDialog(null, "Selecione um item da lista");
+            return;
+        }
+        
+        
+        for (EntryDaily currentEntry : entries) {
+            if (currentEntry.getTitle().equals(title)) {
+              new DailyScreen(user, currentEntry).setVisible(true);
+              this.dispose();
+              break;
+            }
+        }
+    }//GEN-LAST:event_btnEditActionPerformed
 
     /**
      * @param args the command line arguments
@@ -129,7 +199,7 @@ public class ListDaily extends javax.swing.JFrame {
     private javax.swing.JButton btnAddNew;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
-    private javax.swing.JList<String> jList1;
+    private javax.swing.JList<String> entriesList;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

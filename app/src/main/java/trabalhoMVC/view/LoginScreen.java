@@ -118,8 +118,12 @@ public class LoginScreen extends javax.swing.JFrame {
        User user = UserController.validateLogin (username, txtPassword.getPassword());
        
        if(user != null){
-           JOptionPane.showMessageDialog(this, "bem-vindo!" + username);
-           new DailyScreen(user).setVisible(true);
+           if (user.getId() == 0) {
+                JOptionPane.showMessageDialog(this, "O usuário não está cadastrado");
+                return;
+           }
+           JOptionPane.showMessageDialog(this, "bem-vindo! " + username);
+           new ListDaily(user).setVisible(true);
            this.dispose();
        }else{       
         JOptionPane.showConfirmDialog(this, "Login incorreto!");
